@@ -4,7 +4,7 @@ import json
 
 headers = {'User-Agent': 'http-client'}  #diccionario con clave-valor
 
-conn = http.client.HTTPSConnection("api.fda.gov")
+conn = http.client.HTTPSConnection("api.fda.gov") #establecemos conexion con el servidor
 
 conn.request("GET","/drug/label.json?search=active_ingredient:acetylsalicylic&limit=4", None, headers)
 
@@ -14,7 +14,7 @@ print(r1.status, r1.reason)
 
 repos_raw = r1.read().decode("utf-8")
 
-conn.close
+conn.close()
 
 
 repos = json.loads(repos_raw)
