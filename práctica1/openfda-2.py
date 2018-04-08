@@ -6,7 +6,7 @@ headers = {'User-Agent': 'http-client'}  #diccionario con clave-valor
 
 conn = http.client.HTTPSConnection("api.fda.gov") #establecemos conexion con el servidor
 
-conn.request("GET","/drug/label.json?search=active_ingredient:acetylsalicylic&limit=4", None, headers)
+conn.request("GET","/drug/label.json?limit=10", None, headers)
 
 r1 = conn.getresponse()
 

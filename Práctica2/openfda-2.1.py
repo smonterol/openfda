@@ -20,9 +20,11 @@ while True:
     repos = json.loads(repos_raw)
     l_results= len(repos['results'])
 
+
     for i in range(l_results):
-        print("La id del producto es: ", repos['results'][i]['id'])
-        print("El nombre del fabricante es: ", repos['results']['openfda']['manufacturer_name'])
+        info_productos = repos['results'][i]
+        print("La id del producto es: ", info_productos['id'])
+        print("El nombre del fabricante es: ", info_productos['openfda']['manufacturer_name'][0])
 
     if l_results <100:
         break
