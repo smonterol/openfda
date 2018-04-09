@@ -28,4 +28,3 @@ try:
 
 except KeyError:
         print("No se encontraron resultados, por favor introduzca una clave válida")
-        continue
