@@ -1,11 +1,10 @@
-import socket
+import socketserver
 import http.client
-
 import json
+import http.server
 
 
-PORT = 8121
-IP = '192.168.0.13'
+PORT = 8122
 MAX_OPEN_REQUEST = 10
 
 
@@ -32,50 +31,47 @@ for i in range(l_results):
         lista_m.append(info_productos['openfda']['generic_name'][0])
 
 
-def process_client(clientsocket):
+    # HTTPRequestHandler class
+class testHTTPRequestHandler(http.server.BaseHTTPRequestHandler):
+        # GET
+        def do_GET(self):
+            # Send response status code
+            self.send_response(200)
+
+            # Send headers
+            self.send_header('Content-type', 'text/html')
+            self.end_headers()
 
 
-    contenido="""<html>
-      <body style='background-color: mediumaquamarine>
-      <h1>Estos son tus 10 medicamentos:</h2>
-      </body>
-      </html>
-    """
-    for element in lista_m:
-        contenido += element + "<br>"
+            contenido="""<html>
+            <body style='background-color: mediumaquamarine>
+            <h1>Estos son tus 10 medicamentos:</h2>
+            </body>
+            </html>
+            """
+            for element in lista_m:
+                contenido += element + "<br>"
 
-    contenido += "</body></html>"
+            contenido += "</body></html>"
+            self.wfile.write(bytes(contenido, "utf8"))
+            return
+#El servidor comienza aqui
+#objeto de nuestra clase definida anteriormente
+Handler = testHTTPRequestHandler
 
-    linea_inicial = "HTTP/1.1 200 OK\n"
-    cabecera = "Content-Type: text/html\n"
-    cabecera += "Content-Length: {}\n".format(len(str.encode(contenido)))
-    mensaje_respuesta = str.encode(linea_inicial + cabecera + "\n" + contenido)
-    clientsocket.send(mensaje_respuesta)
-    clientsocket.close()
-
-# Creamos un socket para el servidor. Es por el que llegan las peticiones de los clientes.
-
-serversocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+httpd = socketserver.TCPServer(("", PORT), Handler)
+print("serving at port", PORT)
 try:
-# Asociar el socket a la direccion IP y puertos del servidor
-    serversocket.bind((IP, PORT))
-    serversocket.listen(MAX_OPEN_REQUEST)
+    httpd.serve_forever()
+except KeyboardInterrupt:
+        pass
 
-    while True:
-
-# Esperar a que lleguen conexiones del exterior. Cuando llega una conexion nueva, se obtiene un nuevo socket para
-# comunicarnos con el cliente. Este sockets contiene la IP y Puerto del cliente
-       print("Esperando clientes en IP: {}, Puerto: {}".format(IP, PORT))
-       (clientsocket, address) = serversocket.accept()
-       # Procesamos la peticion del cliente, pasandole el socket como argumento
-       process_client(clientsocket)
+httpd.server_close()
 
 
-except socket.error:
 
-#en caso de error conectandose al socket se lanzan los siguientes mensajes
-    print("Problemas usando el puerto {}".format(PORT))
-    print("Lanzalo en otro puerto y verifica la IP")
+
+
 
 
 
