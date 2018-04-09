@@ -21,6 +21,11 @@ repos = json.loads(repos_raw)
 info_productos=repos['results'][0]
 #Obtenemos la id,el proposito y el nombre del fabricante
 
-print("La id del producto es: ", info_productos['id'])
-print("El proposito del producto es: ",info_productos['purpose'][0])
-print("El nombre del fabricante es: ", info_productos['openfda']['manufacturer_name'][0])
+try:
+    print("La id del producto es: ", info_productos['id'])
+    print("El proposito del producto es: ",info_productos['purpose'][0])
+    print("El nombre del fabricante es: ", info_productos['openfda']['manufacturer_name'][0])
+
+except KeyError:
+        print("No se encontraron resultados, por favor introduzca una clave válida")
+        continue

@@ -1,11 +1,12 @@
-import http.server
-import socketserver
+import socket
 import http.client
+
 import json
 
-#puerto desde  donde se lanza el servidor
 
-PORT = 8081
+PORT = 8117
+IP = '192.168.0.13'
+MAX_OPEN_REQUEST = 10
 
 
 lista_m =[]
@@ -31,62 +32,54 @@ for i in range(l_results):
         lista_m.append(info_productos['openfda']['generic_name'][0])
 
 
+def process_client(clientsocket):
+    
 
-
-
-#clase derivada de BaseHttpRequestHandler
-#Hereda todos los metodos de esta clase
-class testHTTPRequestHandler(http.server.BaseHTTPRequestHandler):
-#Get, este metodo se invoca automaticamente cada vez que
-#hay una peticion Get por Http. El recurso solicitado se encunetra en self.path
-     def do_GET(self):
-         #La primera linea es la del status, indicamos que OK
-         self.send_response(200)
-         #En las siguientes lineas de la respuesta
-         #colocamos las cabeceras necesarias para que
-         #el cliente entienda el contenido que le enviamos(HTML)
-
-         self.send_header('Content-type','text/html')
-         self.end_headers()
-
-         # Empezamos definiendo el contenido, porque necesitamos saber cuanto
-         # ocupa para indicarlo en la cabecera
-         # En este contenido pondremos el texto en HTML que queremos que se
-         # visualice en el navegador cliente
-
-         contenido="""<html>
-      <body style='background-color: MEDIUMAQUAMARINE>
-        <h1>Estos son tus 10 medicamentos:</h2>
+    contenido="""<html>
+      <body style='background-color: mediumaquamarine>
+      <h1>Estos son tus 10 medicamentos:</h2>
       </body>
       </html>
     """
+    for element in lista_m:
+        contenido += element + "<br>"
 
+    contenido += "</body></html>"
 
+    linea_inicial = "HTTP/1.1 200 OK\n"
+    cabecera = "Content-Type: text/html\n"
+    cabecera += "Content-Length: {}\n".format(len(str.encode(contenido)))
+    mensaje_respuesta = str.encode(linea_inicial + cabecera + "\n" + contenido)
+    clientsocket.send(mensaje_respuesta)
+    clientsocket.close()
 
-         for element in lista_m:
+# Creamos un socket para el servidor. Es por el que llegan las peticiones de los clientes.
 
-             contenido += element+ "<br>"
-
-         contenido +="</body></html>"
-
-         self.wfile.write(bytes(contenido ,"utf8"))
-         return
-
- #El servidor comienza aqui
-#Establecemos como mannejador nuestra propia clase
-Handler = testHTTPRequestHandler
-
-httpd = socketserver.TCPServer(("",PORT),Handler)
-print("serving at port", PORT)
-
+serversocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 try:
-    httpd.serve_forever()
-except KeyboardInterrupt:
-    pass
+# Asociar el socket a la direccion IP y puertos del servidor
+    serversocket.bind((IP, PORT))
+    serversocket.listen(MAX_OPEN_REQUEST)
 
-httpd.server_close()
-print("")
-print("Server stopped!")
+    while True:
+
+# Esperar a que lleguen conexiones del exterior. Cuando llega una conexion nueva, se obtiene un nuevo socket para
+# comunicarnos con el cliente. Este sockets contiene la IP y Puerto del cliente
+       print("Esperando clientes en IP: {}, Puerto: {}".format(IP, PORT))
+       (clientsocket, address) = serversocket.accept()
+       # Procesamos la peticion del cliente, pasandole el socket como argumento
+       process_client(clientsocket)
+
+
+except socket.error:
+
+#en caso de error conectandose al socket se lanzan los siguientes mensajes
+    print("Problemas usando el puerto {}".format(PORT))
+    print("Lanzalo en otro puerto y verifica la IP")
+
+
+
+
 
 
 
