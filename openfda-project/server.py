@@ -65,7 +65,7 @@ class testHTTPRequestHandler(http.server.BaseHTTPRequestHandler):
                 """
         return html
 
-    def pagina_2(self, lista):  # esta funcion trabajará con los elementos introducidos en los inputs anteriores
+    def pagina_2(self, lista):  # esta funcion trabajará con los elementos introducidos en los inputs
         datos_html = """
                                 <html>
                                     <head>
@@ -103,7 +103,7 @@ class testHTTPRequestHandler(http.server.BaseHTTPRequestHandler):
 
         limit = 1
 
-        # obtenemos las partes de nuestro recurso
+        #dividimos nuestro recurso
         if parametros:
             partes = parametros.split("=")
             if partes[0] == "limit":
@@ -116,7 +116,6 @@ class testHTTPRequestHandler(http.server.BaseHTTPRequestHandler):
         if self.path == '/':
 
             self.send_response(200)  # envia respuesta con el estado
-
             self.send_header('Content-type', 'text/html')  # envia los headers
             self.end_headers()
             html = self.pagina_inicio()
@@ -196,7 +195,7 @@ class testHTTPRequestHandler(http.server.BaseHTTPRequestHandler):
 
         elif 'searchCompany' in self.path:  # Esta opción tambien es algo mas compleja, trabaja como la anterior pero con las compañias
 
-            self.send_response(200)
+            self.send_response(200) 
             self.send_header('Content-type', 'text/html')
             self.end_headers()
 
