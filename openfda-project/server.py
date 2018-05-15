@@ -204,7 +204,7 @@ class testHTTPRequestHandler(http.server.BaseHTTPRequestHandler):
             company = self.path.split('=')[1]
             companies = []
             conn = http.client.HTTPSConnection(self.SERVER_NAME)
-            conn.request("GET", self.RESOURCE_NAME + "?limit=" + str(limit) + self.RESOURCE_NAME + company)
+            conn.request("GET", self.RESOURCE_NAME + "?limit=" + str(limit) + self.COMPANY_openfda + company)
             r1 = conn.getresponse()
             data1 = r1.read()
             data = data1.decode("utf8")
