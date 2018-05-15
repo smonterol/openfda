@@ -207,15 +207,15 @@ class testHTTPRequestHandler(http.server.BaseHTTPRequestHandler):
             self.end_headers()
 
             limit = 10
-            company=self.path.split('=')[1]
+            company =self.path.split('=')[1]
             companies = []
             conn = http.client.HTTPSConnection(self.SERVER_NAME)
             conn.request("GET", self.RESOURCE_NAME + "?limit=" + str(limit) + self.RESOURCE_NAME + company)
             r1 = conn.getresponse()
             data1 = r1.read()
             data = data1.decode("utf8")
-            biblioteca_compañias = json.loads(data)
-            search_company = biblioteca_compañias['results']
+            biblioteca_company = json.loads(data)
+            search_company = biblioteca_company['results']
 
             for search in search_company:
                 companies.append(search['openfda']['manufacturer_name'][0])
